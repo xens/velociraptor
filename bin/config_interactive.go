@@ -1,3 +1,4 @@
+//go:build !aix
 // +build !aix
 
 package main
@@ -69,6 +70,11 @@ What OS will the server be deployed on?
 	gui_port_question = &survey.Input{
 		Message: "Enter the port for the GUI to listen on.",
 		Default: "8889",
+	}
+
+	ca_issuer_question = &survey.Input{
+		Message: "Enter the CA issuer",
+		Default: "Velociraptor CA",
 	}
 
 	log_question = &survey.Input{
@@ -456,6 +462,16 @@ func configSelfSigned(config_obj *config_proto.Config) error {
 			Prompt:   gui_port_question,
 		},
 	}, config_obj.GUI)
+	if err != nil {
+		return err
+	}
+
+	err = survey.Ask([]*survey.Question{
+		{
+			Name:   "Issuer",
+			Prompt: ca_issuer_question,
+		},
+	}, config_obj.CA)
 	if err != nil {
 		return err
 	}

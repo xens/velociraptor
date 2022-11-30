@@ -39,7 +39,7 @@ type CertBundle struct {
 	PrivateKey string
 }
 
-func GenerateCACert(rsaBits int) (*CertBundle, error) {
+func GenerateCACert(config_obj *config_proto.Config, rsaBits int) (*CertBundle, error) {
 	priv, err := rsa.GenerateKey(rand.Reader, rsaBits)
 	if err != nil {
 		return nil, err
@@ -61,7 +61,7 @@ func GenerateCACert(rsaBits int) (*CertBundle, error) {
 	template := x509.Certificate{
 		SerialNumber: serialNumber,
 		Subject: pkix.Name{
-			Organization: []string{"Velociraptor CA"},
+			Organization: []string{config_obj.CA.Issuer},
 		},
 		NotBefore: start_time,
 		NotAfter:  end_time,
